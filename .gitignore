@@ -1,0 +1,37 @@
+# Hugging Face cache
+.hf_cache/
+
+# Python bytecode
+__pycache__/
+*.pyc
+*.pyo
+
+# Model outputs / checkpoints
+outputs/
+
+# Package metadata
+*.egg-info/
+*.egg
+
+# Environment
+.env
+.venv/
+venv/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Site customize
+sitecustomize.py
+
+# Processed data
+data/processed/
+data/processed_tiny_smoke/
+
+# Xet logs
+.hf_cache/xet/

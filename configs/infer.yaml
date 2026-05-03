@@ -1,0 +1,4 @@
+model_path: outputs/mamba_slot_pivot_sft
+input_path: data/processed/test_sft.jsonl
+output_path: outputs/mamba_slot_pivot_sft/predictions.jsonl
+max_new_tokens: 256

@@ -1,0 +1,40 @@
+model_name: state-spaces/mamba2-2.7b
+seed: 42
+
+train_path: data/processed/train_sft.jsonl
+valid_path: data/processed/valid_sft.jsonl
+output_dir: outputs/mamba_slot_pivot_sft
+
+max_length: 8192
+
+per_device_train_batch_size: 1
+per_device_eval_batch_size: 1
+gradient_accumulation_steps: 16
+dataloader_num_workers: 4
+
+learning_rate: 2.0e-4
+weight_decay: 0.01
+lr_scheduler_type: cosine
+warmup_ratio: 0.03
+optim: adamw_torch
+label_smoothing_factor: 0.0
+num_train_epochs: 3
+
+bf16: true
+device_map: auto
+gradient_checkpointing: false
+
+use_lora: true
+lora_r: 16
+lora_alpha: 32
+lora_dropout: 0.05
+target_modules: [in_proj, out_proj]
+
+logging_steps: 20
+eval_steps: 500
+save_steps: 500
+save_total_limit: 2
+load_best_model_at_end: true
+metric_for_best_model: eval_loss
+greater_is_better: false
+report_to: none

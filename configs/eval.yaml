@@ -1,0 +1,2 @@
+pred_path: outputs/mamba_slot_pivot_sft/predictions.jsonl
+output_path: outputs/mamba_slot_pivot_sft/metrics.json
