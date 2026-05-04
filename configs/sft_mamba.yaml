@@ -1,4 +1,4 @@
-model_name: state-spaces/mamba2-2.7b
+model_name: mistralai/Mamba-Codestral-7B-v0.1
 seed: 42
 
 train_path: data/processed/train_sft.jsonl
@@ -22,13 +22,13 @@ num_train_epochs: 3
 
 bf16: true
 device_map: auto
-gradient_checkpointing: false
+gradient_checkpointing: true
 
 use_lora: true
 lora_r: 16
 lora_alpha: 32
 lora_dropout: 0.05
-target_modules: [in_proj, out_proj]
+target_modules: [in_proj]
 
 logging_steps: 20
 eval_steps: 500
