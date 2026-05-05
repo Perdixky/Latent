@@ -1,6 +1,7 @@
 $ErrorActionPreference = "Stop"
 
 $Python = ".\.venv\Scripts\python.exe"
+$env:HF_ENDPOINT = "https://hf-mirror.com"
 $env:HF_HOME = "D:\Code\Latent\.hf_cache"
 
 & $Python scripts\prepare_data.py `
