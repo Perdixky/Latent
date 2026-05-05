@@ -11,6 +11,9 @@ from msp.data.formatting import format_flat_target, format_prompt, format_target
 from msp.data.schema import normalize_chunk_id
 
 
+DEFAULT_INPUT_PATH = Path("data/evidence_corpus_full_shuffled.jsonl")
+
+
 def _load_jsonl(path: Path) -> list[dict[str, Any]]:
     records = []
     with path.open("r", encoding="utf-8-sig") as f:
@@ -146,7 +149,7 @@ def convert_example(
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--input_path", type=Path, default=Path("data/logical_support_dataset.jsonl"))
+    parser.add_argument("--input_path", type=Path, default=DEFAULT_INPUT_PATH)
     parser.add_argument("--output_dir", type=Path, default=Path("data/processed"))
     parser.add_argument("--num_slots", type=int, default=4)
     parser.add_argument("--max_chunks", type=int, default=64)

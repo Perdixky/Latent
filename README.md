@@ -13,7 +13,7 @@ uv pip install -r requirements.txt
 ## V1 Flow
 
 ```powershell
-.venv\Scripts\python scripts\prepare_data.py --input_path data\logical_support_dataset.jsonl --output_dir data\processed --num_slots 4
+.venv\Scripts\python scripts\prepare_data.py --input_path data\evidence_corpus_full_shuffled.jsonl --output_dir data\processed --num_slots 4
 .venv\Scripts\python scripts\train_sft.py --config configs\sft_mamba.yaml
 .venv\Scripts\python scripts\infer_sft.py --model_path outputs\mamba_slot_pivot_sft --input_path data\processed\test_sft.jsonl --output_path outputs\mamba_slot_pivot_sft\predictions.jsonl
 .venv\Scripts\python scripts\eval_sft.py --pred_path outputs\mamba_slot_pivot_sft\predictions.jsonl --output_path outputs\mamba_slot_pivot_sft\metrics.json

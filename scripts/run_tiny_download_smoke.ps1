@@ -4,7 +4,7 @@ $Python = ".\.venv\Scripts\python.exe"
 $env:HF_HOME = "D:\Code\Latent\.hf_cache"
 
 & $Python scripts\prepare_data.py `
-  --input_path data\logical_support_dataset.jsonl `
+  --input_path data\evidence_corpus_full_shuffled.jsonl `
   --output_dir data\processed_tiny_smoke `
   --num_slots 4 `
   --max_chunks 8
