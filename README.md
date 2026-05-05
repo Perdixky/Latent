@@ -22,6 +22,7 @@ $env:HF_HOME = "D:\Code\Latent\.hf_cache"
 ```
 
 Training uses `state-spaces/mamba-130m-hf` by default and may require model download plus GPU memory.
+The main SFT config saves full Trainer checkpoints every `save_steps` and resumes from the latest checkpoint when `resume_from_checkpoint: auto` is set.
 
 ## Downloaded Tiny Smoke Test
 

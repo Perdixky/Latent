@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import inspect
+from pathlib import Path
 
 import torch
 import yaml
@@ -13,11 +14,26 @@ from transformers import (
     TrainingArguments,
     set_seed,
 )
+from transformers.trainer_utils import get_last_checkpoint
 
 import _bootstrap  # noqa: F401
 
 from msp.data.dataset import SlotPivotSFTDataset
 from msp.train.collator import CausalLMCollator
+
+
+def _resolve_resume_checkpoint(cfg: dict) -> str | None:
+    resume_cfg = cfg.get("resume_from_checkpoint")
+    if resume_cfg in (None, False, "false", "False", "none", "None"):
+        return None
+
+    if resume_cfg in (True, "true", "True", "auto", "latest"):
+        output_dir = Path(cfg["output_dir"])
+        if not output_dir.exists():
+            return None
+        return get_last_checkpoint(str(output_dir))
+
+    return str(resume_cfg)
 
 
 def main() -> None:
@@ -111,8 +127,12 @@ def main() -> None:
     else:
         trainer_kwargs["tokenizer"] = tokenizer
     trainer = Trainer(**trainer_kwargs)
-    trainer.train()
+    resume_checkpoint = _resolve_resume_checkpoint(cfg)
+    if resume_checkpoint is not None:
+        print(f"Resuming training from checkpoint: {resume_checkpoint}")
+    trainer.train(resume_from_checkpoint=resume_checkpoint)
     trainer.save_model(cfg["output_dir"])
+    trainer.save_state()
 
 
 if __name__ == "__main__":
