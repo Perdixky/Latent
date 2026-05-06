@@ -17,12 +17,13 @@ $env:HF_ENDPOINT = "https://hf-mirror.com"
 $env:HF_HOME = "D:\Code\Latent\.hf_cache"
 .venv\Scripts\python scripts\prepare_data.py --input_path data\evidence_corpus_full_shuffled.jsonl --output_dir data\processed --num_slots 4
 .venv\Scripts\python scripts\train_sft.py --config configs\sft_mamba.yaml
-.venv\Scripts\python scripts\infer_sft.py --model_path outputs\mamba_slot_pivot_sft --input_path data\processed\test_sft.jsonl --output_path outputs\mamba_slot_pivot_sft\predictions.jsonl
+.venv\Scripts\python scripts\infer_sft.py --model_path outputs\mamba_slot_pivot_sft --input_path data\processed\test_sft.jsonl --output_path outputs\mamba_slot_pivot_sft\predictions.jsonl --max_input_tokens 2816 --max_new_tokens 256 --device_map auto --dtype bfloat16
 .venv\Scripts\python scripts\eval_sft.py --pred_path outputs\mamba_slot_pivot_sft\predictions.jsonl --output_path outputs\mamba_slot_pivot_sft\metrics.json
 ```
 
 Training uses `state-spaces/mamba-130m-hf` by default and may require model download plus GPU memory.
 The main SFT config saves full Trainer checkpoints every `save_steps` and resumes from the latest checkpoint when `resume_from_checkpoint: auto` is set.
+After prompt or target formatting changes, regenerate `data/processed/*.jsonl` before training; old processed files keep the old task text.
 
 ## Downloaded Tiny Smoke Test
 

@@ -41,7 +41,7 @@ def format_prompt(
 ) -> str:
     doc = format_document(chunks, marker_style=marker_style)
     task = f"""<task>
-请输出 {num_slots} 个 evidence slots。
+请输出最多 {num_slots} 个 evidence slots。
 每个 slot 只输出 pivot chunk ids。
 允许不同 slot 重复使用同一个 chunk。
 输出格式必须严格如下：

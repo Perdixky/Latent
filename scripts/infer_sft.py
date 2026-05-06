@@ -6,12 +6,13 @@ from pathlib import Path
 
 import torch
 from tqdm import tqdm
-from transformers import LogitsProcessorList
+from transformers import LogitsProcessorList, StoppingCriteriaList
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 import _bootstrap  # noqa: F401
 
 from msp.inference.constrained_decoding import ChunkIdConstrainedLogitsProcessor
+from msp.inference.stopping import StopOnTextCriteria, trim_after_stop_text
 
 
 def _load_model(model_path: str, model_kwargs: dict):
@@ -99,13 +100,23 @@ def main() -> None:
                         temperature=1.0,
                         eos_token_id=tokenizer.eos_token_id,
                         pad_token_id=tokenizer.pad_token_id,
+                        stopping_criteria=StoppingCriteriaList(
+                            [
+                                StopOnTextCriteria(
+                                    tokenizer=tokenizer,
+                                    prompt_length=prompt_width,
+                                )
+                            ]
+                        ),
                     )
                 print(f"[5] batch generate done, output shape={output_ids.shape}", flush=True)
 
                 for ex, sample_output_ids in zip(batch_examples, output_ids):
-                    generated = tokenizer.decode(
-                        sample_output_ids[prompt_width:],
-                        skip_special_tokens=False,
+                    generated = trim_after_stop_text(
+                        tokenizer.decode(
+                            sample_output_ids[prompt_width:],
+                            skip_special_tokens=False,
+                        )
                     )
                     out.write(
                         json.dumps(
@@ -164,11 +175,21 @@ def main() -> None:
                     eos_token_id=tokenizer.eos_token_id,
                     pad_token_id=tokenizer.pad_token_id,
                     logits_processor=logits_processor,
+                    stopping_criteria=StoppingCriteriaList(
+                        [
+                            StopOnTextCriteria(
+                                tokenizer=tokenizer,
+                                prompt_length=inputs["input_ids"].shape[1],
+                            )
+                        ]
+                    ),
                 )
             print(f"[6] generate done, output shape={output_ids.shape}", flush=True)
-            generated = tokenizer.decode(
-                output_ids[0][inputs["input_ids"].shape[1] :],
-                skip_special_tokens=False,
+            generated = trim_after_stop_text(
+                tokenizer.decode(
+                    output_ids[0][inputs["input_ids"].shape[1] :],
+                    skip_special_tokens=False,
+                )
             )
             out.write(
                 json.dumps(

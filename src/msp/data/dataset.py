@@ -30,6 +30,9 @@ class SlotPivotSFTDataset(Dataset):
         ex = self.examples[idx]
         prompt_ids = self.tokenizer(ex["prompt"], add_special_tokens=False)["input_ids"]
         target_ids = self.tokenizer(ex["target"], add_special_tokens=False)["input_ids"]
+        eos_token_id = getattr(self.tokenizer, "eos_token_id", None)
+        if eos_token_id is not None and (not target_ids or target_ids[-1] != eos_token_id):
+            target_ids = target_ids + [eos_token_id]
 
         input_ids, labels = self.truncate_prompt_and_target(
             prompt_ids,
