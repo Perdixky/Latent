@@ -25,6 +25,21 @@ Training uses `state-spaces/mamba-130m-hf` by default and may require model down
 The main SFT config saves full Trainer checkpoints every `save_steps` and resumes from the latest checkpoint when `resume_from_checkpoint: auto` is set.
 After prompt or target formatting changes, regenerate `data/processed/*.jsonl` before training; old processed files keep the old task text.
 
+## Slot Scorer Flow
+
+This keeps the V1 SFT path as a baseline and trains a separate two-part objective:
+
+- causal LM loss for `<slot_query>` generation
+- slot-conditioned BCE loss for selecting chunks from each generated slot query
+
+```powershell
+.venv\Scripts\python scripts\train_slot_scorer.py --config configs\slot_scorer_mamba.yaml
+.venv\Scripts\python scripts\infer_slot_scorer.py --model_path outputs\mamba_slot_pivot_slot_scorer --input_path data\processed\test_sft.jsonl --output_path outputs\mamba_slot_pivot_slot_scorer\predictions.jsonl --max_input_tokens 2816 --max_new_tokens 128 --device_map auto --dtype bfloat16 --threshold 0.5
+.venv\Scripts\python scripts\eval_sft.py --pred_path outputs\mamba_slot_pivot_slot_scorer\predictions.jsonl --output_path outputs\mamba_slot_pivot_slot_scorer\metrics.json
+```
+
+Tune `--threshold` on the validation split with `support_f2` when recall is more important than precision.
+
 ## Downloaded Tiny Smoke Test
 
 Use this to verify the full train -> infer -> eval path with a very small downloaded model:

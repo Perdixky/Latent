@@ -1,0 +1,49 @@
+model_name: mistralai/Mamba-Codestral-7B-v0.1
+seed: 42
+
+train_path: data/processed/train_sft.jsonl
+valid_path: data/processed/valid_sft.jsonl
+output_dir: outputs/mamba_slot_pivot_slot_scorer
+
+max_length: 3072
+num_slots: 4
+marker_style: xml
+
+slot_query_loss_weight: 1.0
+slot_chunk_bce_loss_weight: 1.0
+pos_weight: 4.0
+scorer_dim: null
+
+per_device_train_batch_size: 1
+per_device_eval_batch_size: 1
+gradient_accumulation_steps: 16
+dataloader_num_workers: 4
+
+learning_rate: 2.0e-4
+weight_decay: 0.01
+lr_scheduler_type: cosine
+warmup_ratio: 0.03
+optim: adamw_torch
+label_smoothing_factor: 0.0
+num_train_epochs: 3
+
+bf16: true
+device_map: auto
+gradient_checkpointing: true
+
+use_lora: true
+lora_r: 16
+lora_alpha: 32
+lora_dropout: 0.05
+target_modules: [in_proj]
+
+logging_steps: 20
+eval_steps: 500
+save_steps: 500
+save_total_limit: 2
+save_safetensors: false
+resume_from_checkpoint: auto
+load_best_model_at_end: true
+metric_for_best_model: eval_loss
+greater_is_better: false
+report_to: none

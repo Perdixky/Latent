@@ -18,6 +18,35 @@ def support_precision(pred_chunks: list[str], gold_chunks: list[str]) -> float:
     return len(gold & pred) / len(pred)
 
 
+def support_f1(pred_chunks: list[str], gold_chunks: list[str]) -> float:
+    precision = support_precision(pred_chunks, gold_chunks)
+    recall = support_recall(pred_chunks, gold_chunks)
+    if precision + recall == 0:
+        return 0.0
+    return 2 * precision * recall / (precision + recall)
+
+
+def support_f2(pred_chunks: list[str], gold_chunks: list[str]) -> float:
+    precision = support_precision(pred_chunks, gold_chunks)
+    recall = support_recall(pred_chunks, gold_chunks)
+    if precision + recall == 0:
+        return 0.0
+    beta_squared = 4
+    return (1 + beta_squared) * precision * recall / (beta_squared * precision + recall)
+
+
+def false_negative_rate(pred_chunks: list[str], gold_chunks: list[str]) -> float:
+    gold = set(gold_chunks)
+    if not gold:
+        return 0.0
+    pred = set(pred_chunks)
+    return len(gold - pred) / len(gold)
+
+
+def false_positive_per_example(pred_chunks: list[str], gold_chunks: list[str]) -> float:
+    return float(len(set(pred_chunks) - set(gold_chunks)))
+
+
 def slot_coverage(slots: list[dict[str, Any]], gold_chunks: list[str]) -> float:
     gold = set(gold_chunks)
     if not slots:

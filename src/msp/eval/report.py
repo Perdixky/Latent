@@ -4,9 +4,13 @@ from typing import Any
 
 from msp.eval.metrics import (
     distinct_slot_ratio,
+    false_negative_rate,
+    false_positive_per_example,
     gold_duplicate_hit_rate,
     invalid_id_rate,
     slot_coverage,
+    support_f1,
+    support_f2,
     support_precision,
     support_recall,
 )
@@ -18,6 +22,10 @@ def evaluate_records(records: list[dict[str, Any]]) -> dict[str, float]:
         return {
             "support_recall": 0.0,
             "support_precision": 0.0,
+            "support_f1": 0.0,
+            "support_f2": 0.0,
+            "false_negative_rate": 0.0,
+            "false_positive_per_example": 0.0,
             "slot_coverage": 0.0,
             "gold_duplicate_hit_rate": 0.0,
             "invalid_id_rate": 0.0,
@@ -28,6 +36,10 @@ def evaluate_records(records: list[dict[str, Any]]) -> dict[str, float]:
     totals = {
         "support_recall": 0.0,
         "support_precision": 0.0,
+        "support_f1": 0.0,
+        "support_f2": 0.0,
+        "false_negative_rate": 0.0,
+        "false_positive_per_example": 0.0,
         "slot_coverage": 0.0,
         "gold_duplicate_hit_rate": 0.0,
         "invalid_id_rate": 0.0,
@@ -52,6 +64,13 @@ def evaluate_records(records: list[dict[str, Any]]) -> dict[str, float]:
         gold = record.get("gold_support_chunks", [])
         totals["support_recall"] += support_recall(parsed["pred_chunks"], gold)
         totals["support_precision"] += support_precision(parsed["pred_chunks"], gold)
+        totals["support_f1"] += support_f1(parsed["pred_chunks"], gold)
+        totals["support_f2"] += support_f2(parsed["pred_chunks"], gold)
+        totals["false_negative_rate"] += false_negative_rate(parsed["pred_chunks"], gold)
+        totals["false_positive_per_example"] += false_positive_per_example(
+            parsed["pred_chunks"],
+            gold,
+        )
         totals["slot_coverage"] += slot_coverage(parsed["slots"], gold)
         totals["gold_duplicate_hit_rate"] += gold_duplicate_hit_rate(
             parsed["pred_chunks_with_duplicates"],
